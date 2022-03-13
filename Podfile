@@ -11,6 +11,7 @@ pod 'Firebase/Firestore'
 pod 'Firebase/Database'
 pod 'Firebase/Core'
 pod 'FBSDKLoginKit'
+pod 'GoogleSignIn'
 
   target 'MessengerTests' do
     inherit! :search_paths

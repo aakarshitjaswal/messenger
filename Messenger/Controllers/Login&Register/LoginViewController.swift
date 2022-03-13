@@ -9,6 +9,7 @@ import UIKit
 import FirebaseAuth
 import FBSDKLoginKit
 import FBSDKCoreKit
+import GoogleSignIn
 
 class LoginViewController: UIViewController {
     var email = ""
@@ -81,6 +82,12 @@ class LoginViewController: UIViewController {
         button.permissions = ["public_profile", "email"]
         return button
     }()
+    
+    //Google Signin Button
+    let googleSignInButton: GIDSignInButton = {
+        let button = GIDSignInButton()
+        return button
+    }()
             
 
     
@@ -89,7 +96,6 @@ class LoginViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("viewDidLoad called ====================================================================================================================================================================================================================================================================================================")
         title = "Log in"
         facebookLoginButton.delegate = self
         view.backgroundColor = .white
@@ -101,6 +107,7 @@ class LoginViewController: UIViewController {
         
         //Add target to log in button
         logInButton.addTarget(self, action: #selector(didTapLogin), for: .touchUpInside)
+        googleSignInButton.addTarget(self, action: #selector(didSigninWithGoogle), for: .touchUpInside)
         
         //Add subviews
         view.addSubview(scrollView)
@@ -109,6 +116,7 @@ class LoginViewController: UIViewController {
         scrollView.addSubview(passwordTextField)
         scrollView.addSubview(logInButton)
         scrollView.addSubview(facebookLoginButton)
+        scrollView.addSubview(googleSignInButton)
         
     }
     
@@ -130,6 +138,8 @@ class LoginViewController: UIViewController {
         logInButton.frame = CGRect(x: emailTextField.left, y: passwordTextField.bottom + 20, width: passwordTextField.width, height: passwordTextField.height)
         
         facebookLoginButton.frame = CGRect(x: emailTextField.left, y: logInButton.bottom + 20, width: passwordTextField.width, height: passwordTextField.height)
+        
+        googleSignInButton.frame = CGRect(x: emailTextField.left, y: facebookLoginButton.bottom + 20, width: passwordTextField.width, height: passwordTextField.height)
     }
     
 
@@ -180,6 +190,55 @@ class LoginViewController: UIViewController {
         }
         print("Logged in user")
         
+    }
+    
+    @objc private func didSigninWithGoogle() {
+
+        GIDSignIn.sharedInstance.signIn(with: DatabaseManager.shared.signInConfig, presenting: self) { user, error in
+            guard error == nil else { return }
+            guard let user = user else { return }
+            guard let email = user.profile?.email, let firstName = user.profile?.givenName, let lastName = user.profile?.familyName else { return }
+            
+            let auth = user.authentication
+            guard let idToken = auth.idToken else {return}
+            
+            let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: auth.accessToken)
+            
+            DatabaseManager.shared.userExists(with: email) { exists in
+                guard exists else {
+                    DatabaseManager.shared.insertUser(with: ChatUser(email: email, firstName: firstName, lastName: lastName))
+                    
+                    FirebaseAuth.Auth.auth().signIn(with: credential) { [weak self] authResult, error in
+                        guard let strongSelf = self else { return }
+                        guard authResult != nil, error == nil else {
+                            print("Firebase sign in failed")
+                            return
+                        }
+                        
+                        strongSelf.navigationController?.dismiss(animated: true, completion: nil)
+                        
+                    }
+                    
+                    return
+                }
+                
+                FirebaseAuth.Auth.auth().signIn(with: credential) { [weak self] authResult, error in
+                    guard let strongSelf = self else { return }
+                    guard authResult != nil, error == nil else {
+                        print("Firebase sign in failed")
+                        return
+                    }
+                    
+                    strongSelf.navigationController?.dismiss(animated: true, completion: nil)
+                    
+                }
+                
+                
+            }
+            
+
+          // If sign in succeeded, display the app's main content View.
+        }
     }
 }
 

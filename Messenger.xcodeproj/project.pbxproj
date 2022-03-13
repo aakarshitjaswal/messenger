@@ -683,6 +683,8 @@
 				DEVELOPMENT_TEAM = G63S3UN597;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Messenger/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Camera access required for taking a photo for Profile Picture.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Photos access required for selecting a photo for Profile Picture.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -714,6 +716,8 @@
 				DEVELOPMENT_TEAM = G63S3UN597;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Messenger/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Camera access required for taking a photo for Profile Picture.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Photos access required for selecting a photo for Profile Picture.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;

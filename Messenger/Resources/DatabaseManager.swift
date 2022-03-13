@@ -8,11 +8,16 @@
 import Foundation
 import Firebase
 import FirebaseDatabase
+import GoogleSignIn
 
 class DatabaseManager {
     static let shared = DatabaseManager()
     
     public let database = Database.database().reference()
+    
+    //Google Sign In configuration
+    let signInConfig = GIDConfiguration.init(clientID: "686138751307-4l72ruu3ccu60vmojkh7mrmgdjd3p172.apps.googleusercontent.com")
+
     
 }
 
