@@ -8,6 +8,10 @@ target 'Messenger' do
   # Pods for Messenger
 pod 'Firebase/Auth'
 pod 'Firebase/Firestore'
+pod 'Firebase/Database'
+pod 'Firebase/Core'
+pod 'FBSDKLoginKit'
+
   target 'MessengerTests' do
     inherit! :search_paths
     # Pods for testing

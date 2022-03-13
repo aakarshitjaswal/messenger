@@ -173,8 +173,8 @@ class RegisterViewController: UIViewController {
     
     
     //Creating an alert for displaying errors
-    func alertUserLogInError() {
-        let alert = UIAlertController(title: "Woops!", message: "Please fill in your log in information", preferredStyle: .alert)
+    func alertUserLogInError(message: String) {
+        let alert = UIAlertController(title: "Woops!", message: message, preferredStyle: .alert)
         
         let action = UIAlertAction(title: "Dismiss", style: .cancel, handler: nil)
         alert.addAction(action)
@@ -190,22 +190,39 @@ class RegisterViewController: UIViewController {
         firstNameField.resignFirstResponder()
         lastNameField.resignFirstResponder()
         passwordTextField.resignFirstResponder()
-        guard let email = emailTextField.text, let password = passwordTextField.text, !email.isEmpty, !password.isEmpty, password.count > 6 else {
+        guard let email = emailTextField.text,
+              let password = passwordTextField.text,
+              let firstName = firstNameField.text,
+              let lastName = lastNameField.text,
+              !firstName.isEmpty,
+              !lastName.isEmpty,
+              !email.isEmpty,
+              !password.isEmpty,
+              password.count > 6 else {
             print("Register Button Tapped")
             return
         }
         
-        //Firebase log in
-        FirebaseAuth.Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
-            guard let result = authResult , error == nil else {
+        //Firebase new user registeration
+        FirebaseAuth.Auth.auth().createUser(withEmail: email, password: password) {[weak self] authResult, error in
+            guard let strongSelf = self else {
+                return
+            }
+            guard authResult !== nil , error == nil else {
+                DispatchQueue.main.async {
+                    strongSelf.alertUserLogInError(message: "Email already exists")
+                }
                 print("Error occured while creating a new user")
                 return
             }
             
-            let user = result.user
-            print("Created user \(user)")
+            DatabaseManager.shared.insertUser(with: ChatUser(email: email, firstName: firstName, lastName: lastName))
             
+            strongSelf.navigationController?.dismiss(animated: true, completion: nil)
         }
+     
+        
+
         
         
     }
