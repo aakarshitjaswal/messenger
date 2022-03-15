@@ -110,7 +110,6 @@
         <!--Profile-->
         <scene sceneID="GiL-gU-xgg">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="zDL-zu-3pB" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
                 <navigationController id="0NK-6O-ERZ" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Profile" id="QKq-AC-9xx"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" largeTitles="YES" id="KG1-SC-Q83">
@@ -121,6 +120,7 @@
                         <segue destination="kDP-ya-fia" kind="relationship" relationship="rootViewController" id="P29-e2-RGh"/>
                     </connections>
                 </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="zDL-zu-3pB" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1399" y="124"/>
         </scene>

@@ -14,6 +14,7 @@
 		04393E3727C4EC9500BE3CAD /* NewConversationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04393E3627C4EC9500BE3CAD /* NewConversationViewController.swift */; };
 		04393E3927C4ECA400BE3CAD /* VideoPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04393E3827C4ECA400BE3CAD /* VideoPlayerViewController.swift */; };
 		04393E3B27C4ECB400BE3CAD /* ProfileViewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04393E3A27C4ECB400BE3CAD /* ProfileViewViewController.swift */; };
+		043E699027DF3E0300C7A658 /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 043E698F27DF3E0300C7A658 /* ChatViewController.swift */; };
 		0477233727C4DEF400C0D0B6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0477233627C4DEF400C0D0B6 /* AppDelegate.swift */; };
 		0477233927C4DEF400C0D0B6 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0477233827C4DEF400C0D0B6 /* SceneDelegate.swift */; };
 		0477233B27C4DEF400C0D0B6 /* ConversationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0477233A27C4DEF400C0D0B6 /* ConversationsViewController.swift */; };
@@ -55,6 +56,7 @@
 		04393E3627C4EC9500BE3CAD /* NewConversationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewConversationViewController.swift; sourceTree = "<group>"; };
 		04393E3827C4ECA400BE3CAD /* VideoPlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerViewController.swift; sourceTree = "<group>"; };
 		04393E3A27C4ECB400BE3CAD /* ProfileViewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewViewController.swift; sourceTree = "<group>"; };
+		043E698F27DF3E0300C7A658 /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		0477233327C4DEF400C0D0B6 /* Messenger.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Messenger.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0477233627C4DEF400C0D0B6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0477233827C4DEF400C0D0B6 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -200,6 +202,7 @@
 			isa = PBXGroup;
 			children = (
 				0477233A27C4DEF400C0D0B6 /* ConversationsViewController.swift */,
+				043E698F27DF3E0300C7A658 /* ChatViewController.swift */,
 				04A7989427C4EE7F00AE721F /* Login&Register */,
 				04393E3427C4EC8500BE3CAD /* PhotoViewerViewController.swift */,
 				04393E3627C4EC9500BE3CAD /* NewConversationViewController.swift */,
@@ -496,6 +499,7 @@
 				04393E3327C4EC7200BE3CAD /* RegisterViewController.swift in Sources */,
 				0477233B27C4DEF400C0D0B6 /* ConversationsViewController.swift in Sources */,
 				0477233727C4DEF400C0D0B6 /* AppDelegate.swift in Sources */,
+				043E699027DF3E0300C7A658 /* ChatViewController.swift in Sources */,
 				04E1FBEE27C635BF00F1025D /* Extensions.swift in Sources */,
 				04393E3927C4ECA400BE3CAD /* VideoPlayerViewController.swift in Sources */,
 				04393E3B27C4ECB400BE3CAD /* ProfileViewViewController.swift in Sources */,

@@ -10,8 +10,13 @@ import FirebaseAuth
 import FBSDKLoginKit
 import FBSDKCoreKit
 import GoogleSignIn
+import JGProgressHUD
 
 class LoginViewController: UIViewController {
+    
+    //Creating JGProgress spinner
+    let spinner = JGProgressHUD(style: .dark)
+    
     var email = ""
     //MARK: SubViews
 
@@ -145,8 +150,8 @@ class LoginViewController: UIViewController {
 
     
     //Creating an alert for displaying errors
-    func alertUserLogInError() {
-        let alert = UIAlertController(title: "Woops!", message: "Please fill in your log in information", preferredStyle: .alert)
+    func alertUserLogInError(message: String) {
+        let alert = UIAlertController(title: "Woops!", message: message, preferredStyle: .alert)
         
         let action = UIAlertAction(title: "Dismiss", style: .cancel, handler: nil)
         alert.addAction(action)
@@ -165,6 +170,9 @@ class LoginViewController: UIViewController {
     
     //Function for on login button tap behaviour
     @objc private func didTapLogin() {
+        //Show spinner
+        spinner.show(in: view)
+        
         emailTextField.resignFirstResponder()
         passwordTextField.resignFirstResponder()
         guard let email = emailTextField.text, let password = passwordTextField.text, !email.isEmpty, !password.isEmpty, password.count > 6 else {
@@ -177,10 +185,21 @@ class LoginViewController: UIViewController {
             guard let strongSelf = self else {
                 return
             }
+            
+            
+            DispatchQueue.main.async {
+                strongSelf.spinner.dismiss(animated: true)
+            }
+            
             guard let result = authResult, error == nil else {
+                
+                strongSelf.alertUserLogInError(message: "Couldn't Log in, Please check your credentials")
+                
                 print("Error occured while logging in")
                 return
             }
+       
+            
             let user = result.user
             print(user)
             
@@ -192,11 +211,27 @@ class LoginViewController: UIViewController {
         
     }
     
+    //Google Sign in
     @objc private func didSigninWithGoogle() {
+        
+        spinner.show(in: view)
 
-        GIDSignIn.sharedInstance.signIn(with: DatabaseManager.shared.signInConfig, presenting: self) { user, error in
-            guard error == nil else { return }
+        GIDSignIn.sharedInstance.signIn(with: DatabaseManager.shared.signInConfig, presenting: self) { [weak self] user, error in
+            
+            guard let strongSelf = self else { return }
+            
+            
+            guard error == nil else {
+                
+                DispatchQueue.main.async {
+                    strongSelf.spinner.dismiss(animated: true)
+                }
+                
+                strongSelf.alertUserLogInError(message: "Couldn't log in")
+                return }
+            
             guard let user = user else { return }
+            
             guard let email = user.profile?.email, let firstName = user.profile?.givenName, let lastName = user.profile?.familyName else { return }
             
             let auth = user.authentication
@@ -214,7 +249,9 @@ class LoginViewController: UIViewController {
                             print("Firebase sign in failed")
                             return
                         }
-                        
+                        DispatchQueue.main.async {
+                            strongSelf.spinner.dismiss(animated: true)
+                        }
                         strongSelf.navigationController?.dismiss(animated: true, completion: nil)
                         
                     }
@@ -227,6 +264,10 @@ class LoginViewController: UIViewController {
                     guard authResult != nil, error == nil else {
                         print("Firebase sign in failed")
                         return
+                    }
+                    
+                    DispatchQueue.main.async {
+                        strongSelf.spinner.dismiss(animated: true)
                     }
                     
                     strongSelf.navigationController?.dismiss(animated: true, completion: nil)
@@ -256,8 +297,10 @@ extension LoginViewController: UITextFieldDelegate {
     }
 }
 
+//Facebook login delegate
 extension LoginViewController: LoginButtonDelegate {
     func loginButton(_ loginButton: FBLoginButton, didCompleteWith result: LoginManagerLoginResult?, error: Error?) {
+        spinner.show(in: view)
         print("attempting to log in")
 
         guard let token = result?.token?.tokenString else {
@@ -307,6 +350,11 @@ extension LoginViewController: LoginButtonDelegate {
                             return
                         }
                         print("Successfully logged in")
+                        
+                        DispatchQueue.main.async {
+                            strongSelf.spinner.dismiss(animated: true)
+                        }
+                        
                         strongSelf.navigationController?.dismiss(animated: true, completion: nil)
                         
                     }
@@ -327,6 +375,11 @@ extension LoginViewController: LoginButtonDelegate {
                         return
                     }
                     print("Successfully logged in")
+                    
+                    DispatchQueue.main.async {
+                        strongSelf.spinner.dismiss(animated: true)
+                    }
+                    
                     strongSelf.navigationController?.dismiss(animated: true, completion: nil)
                     
                 }

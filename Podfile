@@ -12,6 +12,10 @@ pod 'Firebase/Database'
 pod 'Firebase/Core'
 pod 'FBSDKLoginKit'
 pod 'GoogleSignIn'
+pod 'JGProgressHUD'
+pod 'MessageKit'
+pod 'RealmSwift'
+pod 'SDWebImage'
 
   target 'MessengerTests' do
     inherit! :search_paths

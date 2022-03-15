@@ -8,9 +8,10 @@
 import UIKit
 import PhotosUI
 import FirebaseAuth
+import JGProgressHUD
 
 class RegisterViewController: UIViewController {
-    
+    let spinner = JGProgressHUD(style: .dark)
     //MARK: SubViews
     
     //creating ScrollView
@@ -186,6 +187,7 @@ class RegisterViewController: UIViewController {
     
     //Function for on Register button tap behaviour
     @objc private func didTapRegisterNewAccount() {
+        spinner.show(in: view)
         emailTextField.resignFirstResponder()
         firstNameField.resignFirstResponder()
         lastNameField.resignFirstResponder()
@@ -208,11 +210,16 @@ class RegisterViewController: UIViewController {
             guard let strongSelf = self else {
                 return
             }
+            
+            DispatchQueue.main.async {
+                strongSelf.spinner.dismiss(animated: true)
+            }
+            
             guard authResult !== nil , error == nil else {
                 DispatchQueue.main.async {
-                    strongSelf.alertUserLogInError(message: "Email already exists")
+                    strongSelf.alertUserLogInError(message: error?.localizedDescription ?? "Error occured")
                 }
-                print("Error occured while creating a new user")
+                print("Error occured while creating a new user \(error!)")
                 return
             }
             
