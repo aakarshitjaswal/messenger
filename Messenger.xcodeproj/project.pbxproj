@@ -24,6 +24,10 @@
 		0477234E27C4DEF600C0D0B6 /* MessengerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0477234D27C4DEF600C0D0B6 /* MessengerTests.swift */; };
 		0477235827C4DEF600C0D0B6 /* MessengerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0477235727C4DEF600C0D0B6 /* MessengerUITests.swift */; };
 		0477235A27C4DEF600C0D0B6 /* MessengerUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0477235927C4DEF600C0D0B6 /* MessengerUITestsLaunchTests.swift */; };
+		047A8B9727E49A9900DD43DF /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047A8B9627E49A9900DD43DF /* StorageManager.swift */; };
+		047A8B9A27E49F6300DD43DF /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = 047A8B9927E49F6300DD43DF /* Realm */; };
+		047A8B9C27E49F6300DD43DF /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 047A8B9B27E49F6300DD43DF /* RealmSwift */; };
+		04B93BE627E22FAC008A5505 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04B93BE527E22FAC008A5505 /* UIKit.framework */; };
 		04C5C19E27C8C3FD00F5CE27 /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04C5C19D27C8C3FD00F5CE27 /* DatabaseManager.swift */; };
 		04E1FBEE27C635BF00F1025D /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04E1FBED27C635BF00F1025D /* Extensions.swift */; };
 		7DB37C64C777B2B876723AFD /* Pods_Messenger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8F7702025EDA8AEBF12C220 /* Pods_Messenger.framework */; };
@@ -70,6 +74,8 @@
 		0477235327C4DEF600C0D0B6 /* MessengerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MessengerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0477235727C4DEF600C0D0B6 /* MessengerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessengerUITests.swift; sourceTree = "<group>"; };
 		0477235927C4DEF600C0D0B6 /* MessengerUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessengerUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		047A8B9627E49A9900DD43DF /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
+		04B93BE527E22FAC008A5505 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		04C5C19D27C8C3FD00F5CE27 /* DatabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseManager.swift; sourceTree = "<group>"; };
 		04E1FBED27C635BF00F1025D /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		360B319D7722691D50461520 /* Pods-MessengerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MessengerTests.debug.xcconfig"; path = "Target Support Files/Pods-MessengerTests/Pods-MessengerTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -88,6 +94,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				047A8B9C27E49F6300DD43DF /* RealmSwift in Frameworks */,
+				047A8B9A27E49F6300DD43DF /* Realm in Frameworks */,
+				04B93BE627E22FAC008A5505 /* UIKit.framework in Frameworks */,
 				7DB37C64C777B2B876723AFD /* Pods_Messenger.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -171,6 +180,7 @@
 				0477233827C4DEF400C0D0B6 /* SceneDelegate.swift */,
 				04E1FBED27C635BF00F1025D /* Extensions.swift */,
 				04C5C19D27C8C3FD00F5CE27 /* DatabaseManager.swift */,
+				047A8B9627E49A9900DD43DF /* StorageManager.swift */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -233,6 +243,7 @@
 		A0CE96CDC14358E779BD745F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				04B93BE527E22FAC008A5505 /* UIKit.framework */,
 				A8F7702025EDA8AEBF12C220 /* Pods_Messenger.framework */,
 				94388AA6B4EA912B758F6010 /* Pods_Messenger_MessengerUITests.framework */,
 				DE20A4F0FE766286003155F9 /* Pods_MessengerTests.framework */,
@@ -271,6 +282,10 @@
 			dependencies = (
 			);
 			name = Messenger;
+			packageProductDependencies = (
+				047A8B9927E49F6300DD43DF /* Realm */,
+				047A8B9B27E49F6300DD43DF /* RealmSwift */,
+			);
 			productName = Messenger;
 			productReference = 0477233327C4DEF400C0D0B6 /* Messenger.app */;
 			productType = "com.apple.product-type.application";
@@ -346,6 +361,9 @@
 				Base,
 			);
 			mainGroup = 0477232A27C4DEF400C0D0B6;
+			packageReferences = (
+				047A8B9827E49F6300DD43DF /* XCRemoteSwiftPackageReference "realm-swift" */,
+			);
 			productRefGroup = 0477233427C4DEF400C0D0B6 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -505,6 +523,7 @@
 				04393E3B27C4ECB400BE3CAD /* ProfileViewViewController.swift in Sources */,
 				0477233927C4DEF400C0D0B6 /* SceneDelegate.swift in Sources */,
 				04393E3527C4EC8500BE3CAD /* PhotoViewerViewController.swift in Sources */,
+				047A8B9727E49A9900DD43DF /* StorageManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -862,6 +881,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		047A8B9827E49F6300DD43DF /* XCRemoteSwiftPackageReference "realm-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/realm/realm-swift";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		047A8B9927E49F6300DD43DF /* Realm */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 047A8B9827E49F6300DD43DF /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = Realm;
+		};
+		047A8B9B27E49F6300DD43DF /* RealmSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 047A8B9827E49F6300DD43DF /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = RealmSwift;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 0477232B27C4DEF400C0D0B6 /* Project object */;
 }

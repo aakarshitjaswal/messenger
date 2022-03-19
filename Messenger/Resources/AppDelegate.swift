@@ -16,8 +16,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             application,
             didFinishLaunchingWithOptions: launchOptions
         )
-        FirebaseApp.configure()
         
+        //Setting up Firebase
+        FirebaseApp.configure()
         
         GIDSignIn.sharedInstance.restorePreviousSignIn { user, error in
           if error != nil || user == nil {
@@ -29,6 +30,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
     
+    //GIDSDK setup method
     func application(
         _ app: UIApplication,
         open url: URL,

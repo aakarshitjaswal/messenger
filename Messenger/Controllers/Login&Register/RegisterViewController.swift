@@ -204,13 +204,15 @@ class RegisterViewController: UIViewController {
             print("Register Button Tapped")
             return
         }
-        
+        //MARK: Firebase new user
+
         //Firebase new user registeration
         FirebaseAuth.Auth.auth().createUser(withEmail: email, password: password) {[weak self] authResult, error in
             guard let strongSelf = self else {
                 return
             }
             
+            //Loading spinner start
             DispatchQueue.main.async {
                 strongSelf.spinner.dismiss(animated: true)
             }
@@ -223,8 +225,37 @@ class RegisterViewController: UIViewController {
                 return
             }
             
-            DatabaseManager.shared.insertUser(with: ChatUser(email: email, firstName: firstName, lastName: lastName))
+            //Creating ChatUser object, also to get profile picture filename computed property on it while adding it to Firebase
+            let chatUser = ChatUser(email: email, firstName: firstName, lastName: lastName)
             
+            //Registering user to Firebase
+            DatabaseManager.shared.insertUser(with: chatUser) { success in
+                guard success else {
+                    print("couldn't add user to firebase")
+                    return
+                }
+                
+                guard let image = strongSelf.imageView.image, let data = image.pngData() else {
+                    return
+                }
+                let fileName = chatUser.profilePictureName
+                
+                //Uploading Profile Picture to Firebase database
+                StorageManager.storageManager.uploadProfilePicture(with: data, fileName: fileName) { result in
+                    switch result {
+                        
+                    case .failure(let error):
+                        print("\(error)Error occured while uploading image")
+                        
+                    case.success(let downloadURL):
+                        
+                        //Storing the picture url in UserDefaults to save Firebase API calls in future
+                        UserDefaults.standard.set(downloadURL, forKey: "profile_picture_url")
+                        print(downloadURL)
+                    }
+                }
+            }
+            //Taking user to Conversation VC
             strongSelf.navigationController?.dismiss(animated: true, completion: nil)
         }
      
@@ -259,6 +290,9 @@ extension RegisterViewController: UITextFieldDelegate {
         return true
     }
 }
+
+
+//MARK: Present photo picker
 
 extension RegisterViewController: UIImagePickerControllerDelegate ,PHPickerViewControllerDelegate, UINavigationControllerDelegate {
     func presentPhotoActionSheet() {

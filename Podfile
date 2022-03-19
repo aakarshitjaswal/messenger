@@ -10,11 +10,11 @@ pod 'Firebase/Auth'
 pod 'Firebase/Firestore'
 pod 'Firebase/Database'
 pod 'Firebase/Core'
+pod 'Firebase/Storage'
 pod 'FBSDKLoginKit'
 pod 'GoogleSignIn'
 pod 'JGProgressHUD'
 pod 'MessageKit'
-pod 'RealmSwift'
 pod 'SDWebImage'
 
   target 'MessengerTests' do

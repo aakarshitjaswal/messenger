@@ -19,7 +19,7 @@ class LoginViewController: UIViewController {
     
     var email = ""
     //MARK: SubViews
-
+    
     //creating ScrollView
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -41,7 +41,7 @@ class LoginViewController: UIViewController {
         field.contentMode = .center
         field.autocapitalizationType = .none
         field.attributedPlaceholder = NSAttributedString(string:"Email", attributes:[NSAttributedString.Key.foregroundColor: UIColor.darkGray])
-
+        
         field.textColor = .black
         field.layer.cornerRadius = 10
         field.autocorrectionType = .no
@@ -57,7 +57,7 @@ class LoginViewController: UIViewController {
         let field = UITextField()
         field.contentMode = .center
         field.autocapitalizationType = .none
-            field.attributedPlaceholder = NSAttributedString(string:"Password", attributes:[NSAttributedString.Key.foregroundColor: UIColor.darkGray])
+        field.attributedPlaceholder = NSAttributedString(string:"Password", attributes:[NSAttributedString.Key.foregroundColor: UIColor.darkGray])
         field.layer.cornerRadius = 10
         field.autocorrectionType = .no
         field.isSecureTextEntry = true
@@ -93,12 +93,12 @@ class LoginViewController: UIViewController {
         let button = GIDSignInButton()
         return button
     }()
-            
-
+    
+    
     
     
     //MARK: ViewDidLoad
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Log in"
@@ -129,7 +129,7 @@ class LoginViewController: UIViewController {
         super.viewDidLayoutSubviews()
         
         //MARK: SubView Frames
-
+        
         //Setting the size of the views
         let size = view.width/3
         scrollView.frame = CGRect(x: view.left, y: view.top, width: view.width, height: view.height)
@@ -147,7 +147,7 @@ class LoginViewController: UIViewController {
         googleSignInButton.frame = CGRect(x: emailTextField.left, y: facebookLoginButton.bottom + 20, width: passwordTextField.width, height: passwordTextField.height)
     }
     
-
+    
     
     //Creating an alert for displaying errors
     func alertUserLogInError(message: String) {
@@ -160,7 +160,7 @@ class LoginViewController: UIViewController {
     
     
     //MARK: Tap Behaviour
-
+    
     //Function for register button tap behaviour
     @objc private func didTapRegister() {
         let vc = RegisterViewController()
@@ -170,6 +170,10 @@ class LoginViewController: UIViewController {
     
     //Function for on login button tap behaviour
     @objc private func didTapLogin() {
+        if emailTextField.text == "" && passwordTextField.text == "" {
+            alertUserLogInError(message: "Enter the dragon!!")
+            return
+        }
         //Show spinner
         spinner.show(in: view)
         
@@ -198,7 +202,7 @@ class LoginViewController: UIViewController {
                 print("Error occured while logging in")
                 return
             }
-       
+            
             
             let user = result.user
             print(user)
@@ -211,11 +215,13 @@ class LoginViewController: UIViewController {
         
     }
     
-    //Google Sign in
+    //MARK: Google Sign in
+    
     @objc private func didSigninWithGoogle() {
         
         spinner.show(in: view)
-
+        
+        //Google sign in
         GIDSignIn.sharedInstance.signIn(with: DatabaseManager.shared.signInConfig, presenting: self) { [weak self] user, error in
             
             guard let strongSelf = self else { return }
@@ -240,24 +246,64 @@ class LoginViewController: UIViewController {
             let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: auth.accessToken)
             
             DatabaseManager.shared.userExists(with: email) { exists in
+                
                 guard exists else {
-                    DatabaseManager.shared.insertUser(with: ChatUser(email: email, firstName: firstName, lastName: lastName))
-                    
-                    FirebaseAuth.Auth.auth().signIn(with: credential) { [weak self] authResult, error in
-                        guard let strongSelf = self else { return }
-                        guard authResult != nil, error == nil else {
-                            print("Firebase sign in failed")
+                    //MARK: User Doesn't Exist
+
+
+                    let chatUser = ChatUser(email: email, firstName: firstName, lastName: lastName)
+                    DatabaseManager.shared.insertUser(with: chatUser) { success in
+                        
+                        guard success else {
                             return
                         }
-                        DispatchQueue.main.async {
-                            strongSelf.spinner.dismiss(animated: true)
+                        print(user.profile!.hasImage)
+                        if user.profile?.hasImage == true {
+                            guard let url = user.profile?.imageURL(withDimension: 200) else {
+                                print("Cannot get google profile image url")
+                                return
+                            }
+                            print(url)
+                            URLSession.shared.dataTask(with: url) { data, _, error in
+                                guard let safeData = data else {
+                                    print("Couldn't fetch google profile image data")
+                                    return
+                                }
+                                let fileName = chatUser.profilePictureName
+                                
+                                //Uploading Profile Picture to Firebase database
+                                StorageManager.storageManager.uploadProfilePicture(with: safeData, fileName: fileName) { result in
+                                    switch result {
+                                        
+                                    case .failure(let error):
+                                        print("\(error)Error occured while uploading image")
+                                        
+                                    case.success(let downloadURL):
+                                        
+                                        //Storing the picture url in UserDefaults to save Firebase API calls in future
+                                        UserDefaults.standard.set(downloadURL, forKey: "profile_picture_url")
+                                        print(downloadURL)
+                                    }
+                                }
+                            }.resume()
                         }
-                        strongSelf.navigationController?.dismiss(animated: true, completion: nil)
                         
+                        //Signing using google credentials
+                        FirebaseAuth.Auth.auth().signIn(with: credential) { [weak self] authResult, error in
+                            guard let strongSelf = self else { return }
+                            guard authResult != nil, error == nil else {
+                                print("Firebase sign in failed")
+                                return
+                            }
+                            DispatchQueue.main.async {
+                                strongSelf.spinner.dismiss(animated: true)
+                            }
+                            strongSelf.navigationController?.dismiss(animated: true, completion: nil)
+                        }
                     }
-                    
                     return
                 }
+                //MARK: User Exists
                 
                 FirebaseAuth.Auth.auth().signIn(with: credential) { [weak self] authResult, error in
                     guard let strongSelf = self else { return }
@@ -270,133 +316,169 @@ class LoginViewController: UIViewController {
                         strongSelf.spinner.dismiss(animated: true)
                     }
                     
+                    // If sign in succeeded, display the app's main content View
                     strongSelf.navigationController?.dismiss(animated: true, completion: nil)
-                    
                 }
-                
-                
             }
-            
-
-          // If sign in succeeded, display the app's main content View.
         }
     }
 }
 
 //MARK: Extension
-
+//Textfield delegate
 extension LoginViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if textField == emailTextField {
             passwordTextField.becomeFirstResponder()
         } else if textField == passwordTextField {
             didTapLogin()
-        } 
+        }
         
         return true
     }
 }
 
-//Facebook login delegate
-extension LoginViewController: LoginButtonDelegate {
-    func loginButton(_ loginButton: FBLoginButton, didCompleteWith result: LoginManagerLoginResult?, error: Error?) {
-        spinner.show(in: view)
-        print("attempting to log in")
 
+//MARK: Facebook Login
+//Conforming our VC to LoginButtonDelegate from FBSDkLoginKit to implement the delegate functions
+extension LoginViewController: LoginButtonDelegate {
+    
+    //loginButton func from the FBSDK Login Kit
+    func loginButton(_ loginButton: FBLoginButton, didCompleteWith result: LoginManagerLoginResult?, error: Error?) {
+        
+        spinner.show(in: view)
+        
+        //Getting auth token from result
         guard let token = result?.token?.tokenString else {
             print("Failed to fetch facebook log in token")
             return
         }
         
-        let facebookRequest = GraphRequest(graphPath: "me", parameters: ["fields":"email, name"], tokenString: token, version: nil, httpMethod: .get)
+        //Creating a Request to FBGraph API i.e., the facebook user details fetch request by providing req parameters
+        let facebookRequest = GraphRequest(graphPath: "me", parameters: ["fields":"email, first_name, last_name, picture"], tokenString: token, version: nil, httpMethod: .get)
         
+        //Sending the request with a completion providing results for parameters passed in FBGraph request
         facebookRequest.start { _, result, error in
-            guard let safeResult = result as? [String: String], error == nil else {
-                print("Failed to make facebook graph request")
+            
+            //Downcasting result into string dictionary with string keys and Any values
+            guard let safeResult = result as? [String: Any], error == nil else {
+                print("Failed to make facebook graph request \(String(describing: error))")
                 return
             }
             
-            guard let userName = safeResult["name"], let email = safeResult["email"] else {
+            print(safeResult)
+            
+            //Tapping into downcasted result's "firstName" & "email", And downcasting on key at a time on picture key to get the picture url key availabe because of the parameter passed into the Graph API
+            guard let firstName = safeResult["first_name"] as? String ,let lastName = safeResult["last_name"] as? String, let email = safeResult["email"] as? String, let picture = safeResult["picture"] as? [String: Any], let data = picture["data"] as?[String: Any], let pictureUrl = data["url"] as? String else {
                 print("Failed to get username and email")
                 return
             }
             
-            let fullName = userName.components(separatedBy: " ")
-            guard fullName.count == 2 else {
-                print("Fullname has more than 2 names")
-                return
-            }
-            
-            let firstName = fullName[0]
-            print(firstName)
-            let lastName = fullName[1]
-            print(lastName)
-            
+        
+            //Checking if user exists on Firebase already
             DatabaseManager.shared.userExists(with: email) { exists in
+                
                 guard exists else {
-                    DatabaseManager.shared.insertUser(with: ChatUser(email: email, firstName: firstName, lastName: lastName))
-                    
-                    
-                    let credential = FacebookAuthProvider.credential(withAccessToken: token)
-                    FirebaseAuth.Auth.auth().signIn(with: credential) { [weak self] authResult, error in
-                        guard let strongSelf = self else {
+                    //MARK: User Doesn't Exist
+                    //Inserting a new user in Firebase Realtime Database if userExists passes a false in bool completion.
+                    let chatUser = ChatUser(email: email, firstName: firstName, lastName: lastName)
+                    DatabaseManager.shared.insertUser(with: chatUser ) { success in
+                        
+                        guard success else {
+                            print("Couldn't inser user to database")
                             return
                         }
-                        guard authResult != nil, error == nil else {
-                            if let error = error {
-                                print("Failed to sign in using Facebook Credential, MFA might be required \(error)")
-
+                        
+                        guard let url = URL(string: pictureUrl) else {
+                            print("couldn't get picture url")
+                            return
+                        }
+                        
+                        //Downloading the image
+                        URLSession.shared.dataTask(with: url) { data, _, error in
+                            guard let data = data else {
+                                print("error fetching facebook profile pic data")
+                                return
                             }
-                            return
+                            
+                            let fileName = chatUser.profilePictureName
+                            
+                            //Uploading Facebook Profile Picture to Firebase database
+                            StorageManager.storageManager.uploadProfilePicture(with: data, fileName: fileName) { result in
+                                switch result {
+                                    
+                                case .failure(let error):
+                                    print("\(error)Error occured while uploading image")
+                                    
+                                case.success(let downloadURL):
+                                    
+                                    //Storing the picture url in UserDefaults to save Firebase API calls in future
+                                    UserDefaults.standard.set(downloadURL, forKey: "facebook_profile_picture_url")
+                                    print(downloadURL)
+                                }
+                            }
+                        }.resume()
+                        
+                        //Creating credentials for sign in using FacebookAuthProvider using token from results
+                        let credential = FacebookAuthProvider.credential(withAccessToken: token)
+                        
+                        //Adding Facebook Authentication and signing in using facebook Credentials
+                        FirebaseAuth.Auth.auth().signIn(with: credential) { [weak self] authResult, error in
+                            
+                            guard let strongSelf = self else {
+                                return
+                            }
+                            
+                            guard authResult != nil, error == nil else {
+                                if let error = error {
+                                    print("Failed to sign in using Facebook Credential, \(error)")
+                                }
+                                return
+                            }
+                            
+                            //User signed in to the app, dismissing the spinner
+                            DispatchQueue.main.async {
+                                strongSelf.spinner.dismiss(animated: true)
+                            }
+                            
+                            //Taking user to the app
+                            strongSelf.navigationController?.dismiss(animated: true, completion: nil)
                         }
-                        print("Successfully logged in")
-                        
-                        DispatchQueue.main.async {
-                            strongSelf.spinner.dismiss(animated: true)
-                        }
-                        
-                        strongSelf.navigationController?.dismiss(animated: true, completion: nil)
-                        
                     }
                     return
                 }
                 
-                
+                //MARK: User Exists
+                //Creating credentials for sign in using FacebookAuthProvider Credentials using token from results
                 let credential = FacebookAuthProvider.credential(withAccessToken: token)
+                
+                //Signing in to the Messenger app with Facebook credentials by verifying them with our Database
                 FirebaseAuth.Auth.auth().signIn(with: credential) { [weak self] authResult, error in
+                    
                     guard let strongSelf = self else {
                         return
                     }
+                    
                     guard authResult != nil, error == nil else {
                         if let error = error {
                             print("Failed to sign in using Facebook Credential, MFA might be required \(error)")
-
                         }
                         return
                     }
-                    print("Successfully logged in")
                     
+                    //User signed in to the app, dismissing the spinner
                     DispatchQueue.main.async {
                         strongSelf.spinner.dismiss(animated: true)
                     }
-                    
+                    //Taking user to the app
                     strongSelf.navigationController?.dismiss(animated: true, completion: nil)
-                    
                 }
-                
-                
             }
-            
-            
-            
         }
-        
     }
     
     func loginButtonDidLogOut(_ loginButton: FBLoginButton) {
         //Not required in this app
         print("Logged out")
     }
-    
-    
 }
