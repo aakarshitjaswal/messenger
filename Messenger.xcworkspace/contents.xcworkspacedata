@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <Group
+      location = "group:Messenger"
+      name = "Messenger">
+      <Group
+         location = "group:ViewModels"
+         name = "ViewModels">
+      </Group>
+      <Group
+         location = "group:Resources"
+         name = "Resources">
+         <FileRef
+            location = "group:StorageManager.swift">
+         </FileRef>
+         <FileRef
+            location = "group:Extensions.swift">
+         </FileRef>
+         <FileRef
+            location = "group:AppDelegate.swift">
+         </FileRef>
+         <FileRef
+            location = "group:DatabaseManager.swift">
+         </FileRef>
+         <FileRef
+            location = "group:SceneDelegate.swift">
+         </FileRef>
+      </Group>
+      <Group
+         location = "group:Models"
+         name = "Models">
+      </Group>
+      <FileRef
+         location = "group:GoogleService-Info.plist">
+      </FileRef>
+      <Group
+         location = "group:Base.lproj"
+         name = "Base.lproj">
+      </Group>
+      <Group
+         location = "group:Controllers"
+         name = "Controllers">
+         <FileRef
+            location = "group:ChatViewController.swift">
+         </FileRef>
+         <FileRef
+            location = "group:NewConversationViewController.swift">
+         </FileRef>
+         <FileRef
+            location = "group:PhotoViewerViewController.swift">
+         </FileRef>
+         <Group
+            location = "group:Login&amp;Register"
+            name = "Login&amp;Register">
+            <FileRef
+               location = "group:LoginViewController.swift">
+            </FileRef>
+            <FileRef
+               location = "group:RegisterViewController.swift">
+            </FileRef>
+         </Group>
+         <FileRef
+            location = "group:ProfileViewViewController.swift">
+         </FileRef>
+         <FileRef
+            location = "group:ConversationsViewController.swift">
+         </FileRef>
+         <FileRef
+            location = "group:VideoPlayerViewController.swift">
+         </FileRef>
+      </Group>
+      <Group
+         location = "group:Views"
+         name = "Views">
+         <Group
+            location = "group:Storyboards"
+            name = "Storyboards">
+            <Group
+               location = "group:Base.lproj"
+               name = "Base.lproj">
+               <FileRef
+                  location = "group:LaunchScreen.storyboard">
+               </FileRef>
+               <FileRef
+                  location = "group:Main.storyboard">
+               </FileRef>
+            </Group>
+         </Group>
+         <Group
+            location = "group:Assets.xcassets"
+            name = "Assets.xcassets">
+            <Group
+               location = "group:logo.imageset"
+               name = "logo.imageset">
+               <FileRef
+                  location = "group:logo.png">
+               </FileRef>
+               <FileRef
+                  location = "group:Contents.json">
+               </FileRef>
+            </Group>
+            <Group
+               location = "group:AppIcon.appiconset"
+               name = "AppIcon.appiconset">
+               <FileRef
+                  location = "group:1024.png">
+               </FileRef>
+               <FileRef
+                  location = "group:76.png">
+               </FileRef>
+               <FileRef
+                  location = "group:60.png">
+               </FileRef>
+               <FileRef
+                  location = "group:58.png">
+               </FileRef>
+               <FileRef
+                  location = "group:167.png">
+               </FileRef>
+               <FileRef
+                  location = "group:72.png">
+               </FileRef>
+               <FileRef
+                  location = "group:29.png">
+               </FileRef>
+               <FileRef
+                  location = "group:100.png">
+               </FileRef>
+               <FileRef
+                  location = "group:114.png">
+               </FileRef>
+               <FileRef
+                  location = "group:120.png">
+               </FileRef>
+               <FileRef
+                  location = "group:20.png">
+               </FileRef>
+               <FileRef
+                  location = "group:Contents.json">
+               </FileRef>
+               <FileRef
+                  location = "group:180.png">
+               </FileRef>
+               <FileRef
+                  location = "group:57.png">
+               </FileRef>
+               <FileRef
+                  location = "group:80.png">
+               </FileRef>
+               <FileRef
+                  location = "group:40.png">
+               </FileRef>
+               <FileRef
+                  location = "group:87.png">
+               </FileRef>
+               <FileRef
+                  location = "group:50.png">
+               </FileRef>
+               <FileRef
+                  location = "group:144.png">
+               </FileRef>
+               <FileRef
+                  location = "group:152.png">
+               </FileRef>
+            </Group>
+            <Group
+               location = "group:AccentColor.colorset"
+               name = "AccentColor.colorset">
+               <FileRef
+                  location = "group:Contents.json">
+               </FileRef>
+            </Group>
+            <FileRef
+               location = "group:Contents.json">
+            </FileRef>
+         </Group>
+      </Group>
+      <FileRef
+         location = "group:Info.plist">
+      </FileRef>
+   </Group>
+   <Group
+      location = "group:Pods"
+      name = "Pods">
+      <Group
+         location = "group:FirebaseCore"
+         name = "FirebaseCore">
+         <Group
+            location = "group:Firebase"
+            name = "Firebase">
+         </Group>
+      </Group>
+      <Group
+         location = "group:FirebaseAuth"
+         name = "FirebaseAuth">
+         <Group
+            location = "group:Firebase"
+            name = "Firebase">
+         </Group>
+      </Group>
+      <Group
+         location = "group:Local Podspecs"
+         name = "Local Podspecs">
+      </Group>
+      <Group
+         location = "group:FirebaseDatabase"
+         name = "FirebaseDatabase">
+         <Group
+            location = "group:Firebase"
+            name = "Firebase">
+         </Group>
+      </Group>
+      <Group
+         location = "group:FirebaseFirestore"
+         name = "FirebaseFirestore">
+         <Group
+            location = "group:Firebase"
+            name = "Firebase">
+         </Group>
+      </Group>
+      <Group
+         location = "group:FirebaseInstallations"
+         name = "FirebaseInstallations">
+         <Group
+            location = "group:Firebase"
+            name = "Firebase">
+         </Group>
+      </Group>
+      <Group
+         location = "group:FirebaseStorage"
+         name = "FirebaseStorage">
+         <Group
+            location = "group:Firebase"
+            name = "Firebase">
+         </Group>
+      </Group>
+      <Group
+         location = "group:gRPC-C++"
+         name = "gRPC-C++">
+         <Group
+            location = "group:include"
+            name = "include">
+            <Group
+               location = "group:grpc"
+               name = "grpc">
+            </Group>
+         </Group>
+      </Group>
+   </Group>
+</Workspace>
