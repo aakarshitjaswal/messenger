@@ -169,6 +169,7 @@ class LoginViewController: UIViewController {
     }
     
     //Function for on login button tap behaviour
+    
     @objc private func didTapLogin() {
         if emailTextField.text == "" && passwordTextField.text == "" {
             alertUserLogInError(message: "Enter the dragon!!")
@@ -182,9 +183,8 @@ class LoginViewController: UIViewController {
         guard let email = emailTextField.text, let password = passwordTextField.text, !email.isEmpty, !password.isEmpty, password.count > 6 else {
             return
         }
-        //Firebase log in
         
-        
+        //MARK: Firebase Log in
         FirebaseAuth.Auth.auth().signIn(withEmail: email, password: password) {[weak self] authResult, error in
             guard let strongSelf = self else {
                 return
@@ -203,7 +203,7 @@ class LoginViewController: UIViewController {
                 return
             }
             
-            
+            UserDefaults.standard.set(email, forKey: "email")
             let user = result.user
             print(user)
             
@@ -221,11 +221,10 @@ class LoginViewController: UIViewController {
         
         spinner.show(in: view)
         
-        //Google sign in
+        //Google sign in api returning user in completion
         GIDSignIn.sharedInstance.signIn(with: DatabaseManager.shared.signInConfig, presenting: self) { [weak self] user, error in
             
             guard let strongSelf = self else { return }
-            
             
             guard error == nil else {
                 
@@ -240,30 +239,39 @@ class LoginViewController: UIViewController {
             
             guard let email = user.profile?.email, let firstName = user.profile?.givenName, let lastName = user.profile?.familyName else { return }
             
+            //Caching email address
+            UserDefaults.standard.set(email, forKey: "email")
+            
             let auth = user.authentication
             guard let idToken = auth.idToken else {return}
             
             let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: auth.accessToken)
             
+            //Checking if user exists on firebase database
             DatabaseManager.shared.userExists(with: email) { exists in
                 
                 guard exists else {
                     //MARK: User Doesn't Exist
-
-
+    
                     let chatUser = ChatUser(email: email, firstName: firstName, lastName: lastName)
+                    
+                    //Adding user to firebase
                     DatabaseManager.shared.insertUser(with: chatUser) { success in
                         
                         guard success else {
                             return
                         }
-                        print(user.profile!.hasImage)
+                        
+                       
+                        //Checking if user has profile image
                         if user.profile?.hasImage == true {
                             guard let url = user.profile?.imageURL(withDimension: 200) else {
                                 print("Cannot get google profile image url")
                                 return
                             }
                             print(url)
+                            
+                            //Downloading image
                             URLSession.shared.dataTask(with: url) { data, _, error in
                                 guard let safeData = data else {
                                     print("Couldn't fetch google profile image data")
@@ -298,6 +306,8 @@ class LoginViewController: UIViewController {
                             DispatchQueue.main.async {
                                 strongSelf.spinner.dismiss(animated: true)
                             }
+                            
+                            //Successfully LOGGED IN, taking user to conversation VC
                             strongSelf.navigationController?.dismiss(animated: true, completion: nil)
                         }
                     }
@@ -315,7 +325,8 @@ class LoginViewController: UIViewController {
                     DispatchQueue.main.async {
                         strongSelf.spinner.dismiss(animated: true)
                     }
-                    
+                    UserDefaults.standard.set(email, forKey: "email")
+
                     // If sign in succeeded, display the app's main content View
                     strongSelf.navigationController?.dismiss(animated: true, completion: nil)
                 }
@@ -346,21 +357,22 @@ extension LoginViewController: LoginButtonDelegate {
     //loginButton func from the FBSDK Login Kit
     func loginButton(_ loginButton: FBLoginButton, didCompleteWith result: LoginManagerLoginResult?, error: Error?) {
         
-        spinner.show(in: view)
+//        spinner.show(in: view)
         
-        //Getting auth token from result
+        
+        
+        //Get auth token from result
         guard let token = result?.token?.tokenString else {
             print("Failed to fetch facebook log in token")
             return
         }
         
-        //Creating a Request to FBGraph API i.e., the facebook user details fetch request by providing req parameters
+        //Create graph request
         let facebookRequest = GraphRequest(graphPath: "me", parameters: ["fields":"email, first_name, last_name, picture"], tokenString: token, version: nil, httpMethod: .get)
         
-        //Sending the request with a completion providing results for parameters passed in FBGraph request
+        //Send graph request
         facebookRequest.start { _, result, error in
             
-            //Downcasting result into string dictionary with string keys and Any values
             guard let safeResult = result as? [String: Any], error == nil else {
                 print("Failed to make facebook graph request \(String(describing: error))")
                 return
@@ -374,13 +386,15 @@ extension LoginViewController: LoginButtonDelegate {
                 return
             }
             
+            //Caching email address
+            UserDefaults.standard.set(email, forKey: "email")
         
             //Checking if user exists on Firebase already
             DatabaseManager.shared.userExists(with: email) { exists in
                 
                 guard exists else {
                     //MARK: User Doesn't Exist
-                    //Inserting a new user in Firebase Realtime Database if userExists passes a false in bool completion.
+                    //Insert new user
                     let chatUser = ChatUser(email: email, firstName: firstName, lastName: lastName)
                     DatabaseManager.shared.insertUser(with: chatUser ) { success in
                         
@@ -412,14 +426,14 @@ extension LoginViewController: LoginButtonDelegate {
                                     
                                 case.success(let downloadURL):
                                     
-                                    //Storing the picture url in UserDefaults to save Firebase API calls in future
+                                    //Cache picture url to save Firebase API Calls later
                                     UserDefaults.standard.set(downloadURL, forKey: "facebook_profile_picture_url")
                                     print(downloadURL)
                                 }
                             }
                         }.resume()
                         
-                        //Creating credentials for sign in using FacebookAuthProvider using token from results
+                        //Get facebook auth credentials
                         let credential = FacebookAuthProvider.credential(withAccessToken: token)
                         
                         //Adding Facebook Authentication and signing in using facebook Credentials
@@ -449,10 +463,10 @@ extension LoginViewController: LoginButtonDelegate {
                 }
                 
                 //MARK: User Exists
-                //Creating credentials for sign in using FacebookAuthProvider Credentials using token from results
+                //Get Facebook auth credentials
                 let credential = FacebookAuthProvider.credential(withAccessToken: token)
                 
-                //Signing in to the Messenger app with Facebook credentials by verifying them with our Database
+                //Sign in with credentials
                 FirebaseAuth.Auth.auth().signIn(with: credential) { [weak self] authResult, error in
                     
                     guard let strongSelf = self else {
@@ -470,7 +484,7 @@ extension LoginViewController: LoginButtonDelegate {
                     DispatchQueue.main.async {
                         strongSelf.spinner.dismiss(animated: true)
                     }
-                    //Taking user to the app
+                    //Successfully LOGGED IN, Taking user to the app
                     strongSelf.navigationController?.dismiss(animated: true, completion: nil)
                 }
             }

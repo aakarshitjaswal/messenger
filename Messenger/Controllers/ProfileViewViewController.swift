@@ -16,18 +16,49 @@ class ProfileViewViewController: UIViewController {
     
     @IBOutlet var tableView: UITableView!
     
+    
     let data = ["Log out"]
 
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.tableHeaderView = createHeaderView()
 
         // Do any additional setup after loading the view.
     }
     
-    
-    
+    func createHeaderView() -> UIView? {
+        guard let email = UserDefaults.standard.string(forKey: "email") else {
+            return nil
+        }
+        let safeEmail = DatabaseManager.safeEmail(email: email)
+        let fileName = "\(safeEmail)" + "_profile_picture.png"
+        print(safeEmail)
+        let path = "image/" + fileName
+        
+        let headerView = UIView(frame: CGRect(x: 0, y: 0, width: self.view.width, height: 300))
+        let imageView = UIImageView(frame: CGRect(x: (headerView.width - 150) / 2, y: 75 , width: 150, height: 150))
+        headerView.backgroundColor = .link
+        
+        imageView.contentMode = .scaleAspectFill
+        imageView.layer.borderWidth = 3
+        imageView.layer.borderColor = UIColor.gray.cgColor
+        imageView.layer.cornerRadius = imageView.width / 2
+        imageView.layer.masksToBounds = true
+        headerView.addSubview(imageView)
+        
+        StorageManager.storageManager.downloadURL(for: path) { result in
+            switch result {
+            case .success(let url):
+                StorageManager.storageManager.downloadImage(imageView: imageView, url: url)
+            case .failure(let error):
+                print("failed to get download URL \(error)")
+            }
+        }
+        
+        return headerView
+    }
 }
 
 extension ProfileViewViewController: UITableViewDelegate, UITableViewDataSource {
